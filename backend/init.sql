@@ -57,13 +57,13 @@ CREATE TABLE `enrollments` (
 -- 插入测试数据（密码都是: password123，已经用Django的make_password加密）
 -- 测试学生
 INSERT INTO `students` (`username`, `password`, `email`) VALUES
-('student1', 'pbkdf2_sha256$600000$test1$Fake1Hash1For1Demo1Purpose1Only', 'student1@test.com'),
-('student2', 'pbkdf2_sha256$600000$test2$Fake2Hash2For2Demo2Purpose2Only', 'student2@test.com');
+('student1', 'pbkdf2_sha256$600000$yuxKmTcx5gEpqYHS8SzVUV$b2Pj8DkJj0yVYhvA2EGPrzRhVApLfTyeXqeZ7A9gWo0=', 'student1@test.com'),
+('student2', 'pbkdf2_sha256$600000$aU0rTWrwRQYeY1K5ZNyeWc$cUKFdUunu7w317d0otqiiA/FD1s+GdGosHBhYy+jSjY=', 'student2@test.com');
 
 -- 测试教师
 INSERT INTO `teachers` (`username`, `password`, `email`) VALUES
-('teacher1', 'pbkdf2_sha256$600000$test3$Fake3Hash3For3Demo3Purpose3Only', 'teacher1@test.com'),
-('teacher2', 'pbkdf2_sha256$600000$test4$Fake4Hash4For4Demo4Purpose4Only', 'teacher2@test.com');
+('teacher1', 'pbkdf2_sha256$600000$yBWYx2XU7Fe77F5blN0ptT$6kZId4KCrTgRgDYGzUMnnrsO6pxrGPf+heinHXrlsoA=', 'teacher1@test.com'),
+('teacher2', 'pbkdf2_sha256$600000$3DvDze07fSuTR0mYC66SEl$z7GkjWsZd31NQ3OZ3Ju1V0CVBCLHzXnKUcuyu6jiR+E=', 'teacher2@test.com');
 
 -- 测试课程
 INSERT INTO `courses` (`name`, `description`, `teacher_id`, `capacity`) VALUES
