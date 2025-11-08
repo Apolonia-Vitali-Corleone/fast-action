@@ -3,3 +3,6 @@ Django==4.2.0
 
 # CORS支持（允许前端跨域访问）
 django-cors-headers==4.0.0
+
+# MySQL客户端
+mysqlclient==2.2.0

@@ -1,79 +1,107 @@
 # Django 选课系统
 
-一个基于 Django + Vue.js 的完整选课管理系统，展示了 Django 的主要特性。
+一个基于 Django + Vue.js 的完整选课管理系统。
 
-## 功能特性
+## 项目特点
 
-### 用户角色
-- **学生**：查看可选课程、选课、退课、管理我的课程
-- **老师**：创建课程、删除课程、查看课程选课学生名单
-- **管理员**：通过 Django Admin 后台管理所有数据
+- ✅ **无外键设计** - 所有关联关系在应用层处理
+- ✅ **清晰的应用分离** - students、teachers、courses 独立应用
+- ✅ **MySQL数据库** - 生产级数据库，提供SQL初始化脚本
+- ✅ **角色分离** - 学生和教师完全独立的模型和API
 
-### Django 特性展示
-- ✅ 自定义用户模型 (AbstractUser)
-- ✅ 数据库关系 (ForeignKey, ManyToMany)
-- ✅ 认证系统 (Session-based Authentication)
-- ✅ Django Admin 后台
-- ✅ RESTful API 设计
-- ✅ 权限控制 (基于角色)
-- ✅ 数据验证
-- ✅ CORS 跨域支持
+## 系统角色
 
-## 数据模型
+### 学生
+- 注册/登录
+- 查看可选课程
+- 选课/退课
+- 查看我的课程
 
-### User (用户)
-- 扩展 Django 的 AbstractUser
-- 字段：username, email, password, role (student/teacher)
+### 教师
+- 注册/登录
+- 创建课程
+- 删除课程
+- 查看课程选课学生名单
 
-### Course (课程)
-- 字段：name, description, teacher (外键), capacity, created_at
-- 方法：enrolled_count(), is_full()
+### 管理员
+- Django Admin后台管理所有数据
 
-### Enrollment (选课记录)
-- 字段：student (外键), course (外键), enrolled_at
-- 约束：同一学生不能重复选同一门课 (unique_together)
+## 数据模型（无外键）
 
-### Student (旧版，保留兼容)
-- 字段：name, age, major, created_at
+### students 表
+```sql
+id, username, password, email, created_at
+```
+
+### teachers 表
+```sql
+id, username, password, email, created_at
+```
+
+### courses 表
+```sql
+id, name, description, teacher_id (int), capacity, created_at
+```
+
+### enrollments 表
+```sql
+id, student_id (int), course_id (int), enrolled_at
+```
+
+**所有关联都用普通int字段，在应用层处理关联逻辑**
 
 ## API 接口
 
-### 认证相关
-- `POST /api/register/` - 注册（含角色选择）
-- `POST /api/login/` - 登录
-- `POST /api/logout/` - 登出
-- `GET /api/current-user/` - 获取当前用户信息
-
-### 学生功能
-- `GET /api/student/courses/` - 查看所有可选课程
+### 学生接口
+- `POST /api/student/register/` - 学生注册
+- `POST /api/student/login/` - 学生登录
+- `GET /api/student/courses/` - 查看可选课程
 - `GET /api/student/my-courses/` - 查看我的课程
 - `POST /api/student/enroll/` - 选课
 - `POST /api/student/drop/` - 退课
 
-### 教师功能
+### 教师接口
+- `POST /api/teacher/register/` - 教师注册
+- `POST /api/teacher/login/` - 教师登录
 - `GET /api/teacher/courses/` - 查看我的课程
 - `POST /api/teacher/courses/create/` - 创建课程
 - `DELETE /api/teacher/courses/<id>/delete/` - 删除课程
-- `GET /api/teacher/courses/<id>/students/` - 查看课程选课学生
+- `GET /api/teacher/courses/<id>/students/` - 查看课程学生
 
-### 管理员功能
-- `/admin/` - Django Admin 后台
+### 通用接口
+- `POST /api/logout/` - 登出
+- `GET /api/current-user/` - 获取当前用户信息
 
 ## 快速开始
 
-### 后端启动
+### 1. 初始化MySQL数据库
+
+```bash
+# 连接MySQL
+mysql -h 192.168.233.136 -u root -p
+
+# 执行初始化脚本
+source backend/init.sql
+```
+
+这将创建：
+- `course_system` 数据库
+- 4张表（students, teachers, courses, enrollments）
+- 测试数据（2个学生，2个教师，3门课程）
+
+### 2. 启动后端
 
 ```bash
 cd backend
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py createsuperuser  # 创建管理员账号
 python manage.py runserver
 ```
 
-后端将运行在 `http://localhost:8000`
+后端运行在 `http://localhost:8000`
 
-### 前端启动
+**注意**: 不需要运行 `makemigrations` 和 `migrate`，直接使用SQL初始化的表结构
+
+### 3. 启动前端
 
 ```bash
 cd frontend
@@ -81,112 +109,122 @@ npm install
 npm run dev
 ```
 
-前端将运行在 `http://localhost:5173`
+前端运行在 `http://localhost:5173`
 
-## 使用说明
+## 测试账号
 
-### 注册账号
-1. 打开前端页面
-2. 点击"注册"标签
-3. 填写用户名、邮箱、密码
-4. **选择身份**：学生或老师
-5. 点击"注册"按钮
+### 学生账号
+- 用户名: `student1` / 密码: `password123`
+- 用户名: `student2` / 密码: `password123`
 
-### 学生使用流程
-1. 使用学生账号登录
-2. 在"可选课程"标签查看所有课程
-3. 点击"选课"按钮选择课程
-4. 在"我的课程"标签查看已选课程
-5. 可以点击"退课"按钮退选课程
-
-### 教师使用流程
-1. 使用教师账号登录
-2. 在"创建新课程"表单中填写课程信息
-3. 点击"创建课程"按钮
-4. 在"我的课程"列表中查看已创建的课程
-5. 点击"查看学生"查看选课学生名单
-6. 可以删除不需要的课程
-
-### 管理员使用流程
-1. 访问 `http://localhost:8000/admin/`
-2. 使用 superuser 账号登录
-3. 管理所有用户、课程、选课记录
-
-## 技术栈
-
-### 后端
-- Django 4.2.0
-- django-cors-headers 4.0.0
-- SQLite 数据库
-
-### 前端
-- Vue 3 (Composition API)
-- Axios (HTTP 客户端)
-- Vite (构建工具)
+### 教师账号
+- 用户名: `teacher1` / 密码: `password123`
+- 用户名: `teacher2` / 密码: `password123`
 
 ## 项目结构
 
 ```
 fast-action/
 ├── backend/
+│   ├── students/           # 学生应用
+│   │   ├── models.py       # Student模型
+│   │   ├── views.py        # 学生API
+│   │   ├── auth_views.py   # 通用认证
+│   │   └── urls.py         # 学生路由
+│   ├── teachers/           # 教师应用
+│   │   ├── models.py       # Teacher模型
+│   │   ├── views.py        # 教师API
+│   │   └── urls.py         # 教师路由
+│   ├── courses/            # 课程应用
+│   │   └── models.py       # Course, Enrollment模型
 │   ├── backend/
-│   │   ├── settings.py      # Django 配置
-│   │   ├── urls.py          # 主路由
-│   │   └── wsgi.py
-│   ├── students/
-│   │   ├── models.py        # 数据模型
-│   │   ├── views.py         # API 视图
-│   │   ├── urls.py          # API 路由
-│   │   └── admin.py         # Admin 配置
-│   ├── manage.py
+│   │   ├── settings.py     # MySQL配置
+│   │   └── urls.py         # 主路由
+│   ├── init.sql            # MySQL初始化脚本
 │   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── App.vue          # 主组件
-│   │   └── main.js          # 入口文件
-│   ├── index.html
-│   └── package.json
-└── README.md
+└── frontend/
+    └── src/
+        └── App.vue         # 前端主组件
 ```
 
-## 注意事项
+## 技术栈
 
-- 本项目使用 Session 认证，需要配置 CORS 支持跨域 Cookie
-- 为了简化，CSRF 验证在部分接口中被禁用（生产环境需启用）
-- 数据库使用 SQLite，生产环境建议使用 PostgreSQL 或 MySQL
-- Admin 后台可以管理所有数据，包括用户、课程、选课记录
+### 后端
+- Django 4.2.0
+- MySQL 8.0
+- mysqlclient 2.2.0
+- django-cors-headers 4.0.0
 
-## Django 特性说明
+### 前端
+- Vue 3 (Composition API)
+- Axios
+- Vite
 
-### 1. 自定义用户模型
-通过继承 `AbstractUser` 扩展用户模型，添加 `role` 字段区分学生和老师。
+## 设计理念
 
-### 2. 模型关系
-- `Course.teacher` → `User` (多对一)
-- `Enrollment.student` → `User` (多对一)
-- `Enrollment.course` → `Course` (多对一)
-- 实现了学生和课程的多对多关系
+### 1. 无外键设计
+- 数据库不使用外键约束
+- 所有关联通过应用层的int字段处理
+- 查询时手动join数据
 
-### 3. 认证与权限
-- 使用 Django 自带的认证系统
-- 基于 Session 的认证机制
-- 在视图中检查用户角色实现权限控制
+### 2. 应用分离
+- students、teachers、courses 独立应用
+- 学生和教师不共用User模型
+- 每个应用有自己的views和urls
 
-### 4. Django Admin
-- 注册所有模型到 Admin
-- 自定义显示字段和过滤器
-- 支持搜索和排序
+### 3. MySQL直接初始化
+- 不依赖Django migrations
+- 提供SQL脚本直接创建表
+- 更接近生产环境实践
 
-### 5. 数据验证
-- 模型层约束：unique_together, ForeignKey
-- 视图层验证：检查课程容量、重复选课
+## 应用层关联示例
+
+查看课程时关联教师信息：
+```python
+# 获取课程
+course = Course.objects.filter(id=course_id).first()
+
+# 应用层关联：查找教师
+teacher = Teacher.objects.filter(id=course.teacher_id).first()
+teacher_name = teacher.username if teacher else '未知'
+```
+
+查看选课记录时关联学生和课程：
+```python
+# 获取选课记录
+enrollment = Enrollment.objects.filter(student_id=user_id)
+
+for e in enrollment:
+    # 应用层关联：查找课程
+    course = Course.objects.filter(id=e.course_id).first()
+
+    # 应用层关联：查找教师
+    teacher = Teacher.objects.filter(id=course.teacher_id).first()
+```
+
+## MySQL配置说明
+
+在 `backend/backend/settings.py` 中：
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'course_system',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '192.168.233.136',
+        'PORT': '3306',
+    }
+}
+```
 
 ## 开发说明
 
-这是一个基础的选课系统，重点在于展示 Django 的核心特性：
-- 完整的用户认证流程
-- 数据库关系设计
-- RESTful API 设计
+这是一个基础的选课系统，重点展示：
+- 无外键的应用层关联设计
+- 清晰的应用结构分离
+- MySQL直接初始化
 - 前后端分离架构
 
 代码注重可读性和功能完整性，没有进行过度优化。

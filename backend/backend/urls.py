@@ -10,6 +10,9 @@ urlpatterns = [
     # Django Admin后台
     path('admin/', admin.site.urls),
 
-    # 选课系统API路由
+    # 学生相关API
     path('', include('students.urls')),
+
+    # 教师相关API
+    path('', include('teachers.urls')),
 ]
