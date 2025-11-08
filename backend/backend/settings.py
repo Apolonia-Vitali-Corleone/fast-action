@@ -19,10 +19,14 @@ ALLOWED_HOSTS = ['*']
 
 # 已安装的应用
 INSTALLED_APPS = [
-    'django.contrib.contenttypes',  # 内容类型框架
-    'django.contrib.staticfiles',   # 静态文件管理
+    'django.contrib.admin',          # Admin后台
+    'django.contrib.auth',           # 认证框架
+    'django.contrib.contenttypes',   # 内容类型框架
+    'django.contrib.sessions',       # Session框架
+    'django.contrib.messages',       # 消息框架
+    'django.contrib.staticfiles',    # 静态文件管理
     'corsheaders',                   # CORS跨域支持
-    'students',                      # 学生信息应用
+    'students',                      # 选课系统应用
 ]
 
 # 中间件
@@ -30,11 +34,31 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',      # 安全中间件
     'corsheaders.middleware.CorsMiddleware',              # CORS中间件（必须在CommonMiddleware之前）
     'django.middleware.common.CommonMiddleware',          # 通用中间件
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Session中间件
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # 认证中间件
+    'django.contrib.messages.middleware.MessageMiddleware',  # 消息中间件
     'django.middleware.clickjacking.XFrameOptionsMiddleware',  # 点击劫持保护
 ]
 
 # URL配置
 ROOT_URLCONF = 'backend.urls'
+
+# 模板配置
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 # WSGI应用
 WSGI_APPLICATION = 'backend.wsgi.application'
@@ -61,6 +85,9 @@ STATIC_URL = 'static/'
 
 # 默认主键类型
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 自定义用户模型
+AUTH_USER_MODEL = 'students.User'
 
 # CORS配置（允许前端跨域访问）
 CORS_ALLOW_ALL_ORIGINS = True  # 允许所有来源（生产环境需要配置具体域名）
