@@ -1,0 +1,5 @@
+# Django框架
+Django==4.2.0
+
+# CORS支持（允许前端跨域访问）
+django-cors-headers==4.0.0
