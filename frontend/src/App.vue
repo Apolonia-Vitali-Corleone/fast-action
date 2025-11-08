@@ -24,6 +24,14 @@
         <!-- 登录表单 -->
         <form v-if="authMode === 'login'" @submit.prevent="handleLogin" class="form">
           <div class="form-group">
+            <label>身份</label>
+            <select v-model="loginRole" required>
+              <option value="">请选择</option>
+              <option value="student">学生</option>
+              <option value="teacher">老师</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label>用户名</label>
             <input v-model="authForm.username" required>
           </div>
@@ -248,6 +256,7 @@ axios.defaults.withCredentials = true  // 支持Session
 const currentUser = ref(null)
 const authMode = ref('login')
 const studentView = ref('courses')
+const loginRole = ref('')  // 登录时选择的角色
 
 // 表单数据
 const authForm = ref({ username: '', password: '', email: '', role: '' })
@@ -265,13 +274,23 @@ const showStudentsModal = ref(false)
 
 const handleLogin = async () => {
   try {
-    const res = await axios.post(`${API_BASE}/login/`, {
+    // 登录时需要先选择身份
+    if (!loginRole.value) {
+      alert('请选择登录身份')
+      return
+    }
+
+    // 根据角色调用不同的登录接口
+    const endpoint = loginRole.value === 'student' ? '/student/login/' : '/teacher/login/'
+    const res = await axios.post(`${API_BASE}${endpoint}`, {
       username: authForm.value.username,
       password: authForm.value.password
     })
+
     currentUser.value = res.data.user
     alert('登录成功')
     authForm.value = { username: '', password: '', email: '', role: '' }
+    loginRole.value = ''
 
     // 根据角色加载数据
     if (currentUser.value.role === 'student') {
@@ -286,7 +305,19 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
   try {
-    await axios.post(`${API_BASE}/register/`, authForm.value)
+    if (!authForm.value.role) {
+      alert('请选择注册身份')
+      return
+    }
+
+    // 根据角色调用不同的注册接口
+    const endpoint = authForm.value.role === 'student' ? '/student/register/' : '/teacher/register/'
+    await axios.post(`${API_BASE}${endpoint}`, {
+      username: authForm.value.username,
+      password: authForm.value.password,
+      email: authForm.value.email
+    })
+
     alert('注册成功，请登录')
     authMode.value = 'login'
     authForm.value = { username: '', password: '', email: '', role: '' }

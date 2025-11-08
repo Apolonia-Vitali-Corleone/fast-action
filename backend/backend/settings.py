@@ -26,7 +26,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',       # 消息框架
     'django.contrib.staticfiles',    # 静态文件管理
     'corsheaders',                   # CORS跨域支持
-    'students',                      # 选课系统应用
+    'students',                      # 学生应用
+    'teachers',                      # 教师应用
+    'courses',                       # 课程应用
 ]
 
 # 中间件
@@ -63,11 +65,19 @@ TEMPLATES = [
 # WSGI应用
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# 数据库配置（使用SQLite）
+# 数据库配置（使用MySQL）
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # 数据库引擎
-        'NAME': BASE_DIR / 'db.sqlite3',         # 数据库文件路径
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'course_system',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '192.168.233.136',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
 
@@ -85,9 +95,6 @@ STATIC_URL = 'static/'
 
 # 默认主键类型
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# 自定义用户模型
-AUTH_USER_MODEL = 'students.User'
 
 # CORS配置（允许前端跨域访问）
 CORS_ALLOW_ALL_ORIGINS = True  # 允许所有来源（生产环境需要配置具体域名）
