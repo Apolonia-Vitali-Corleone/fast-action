@@ -11,6 +11,68 @@ DROP TABLE IF EXISTS `enrollments`;
 DROP TABLE IF EXISTS `courses`;
 DROP TABLE IF EXISTS `students`;
 DROP TABLE IF EXISTS `teachers`;
+DROP TABLE IF EXISTS `django_session`;
+DROP TABLE IF EXISTS `django_admin_log`;
+DROP TABLE IF EXISTS `django_content_type`;
+DROP TABLE IF EXISTS `auth_permission`;
+DROP TABLE IF EXISTS `auth_group_permissions`;
+DROP TABLE IF EXISTS `auth_group`;
+
+-- Django系统表
+CREATE TABLE `django_session` (
+  `session_key` VARCHAR(40) NOT NULL PRIMARY KEY,
+  `session_data` LONGTEXT NOT NULL,
+  `expire_date` DATETIME(6) NOT NULL,
+  INDEX `django_session_expire_date_a5c62663` (`expire_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `django_content_type` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `app_label` VARCHAR(100) NOT NULL,
+  `model` VARCHAR(100) NOT NULL,
+  UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `auth_permission` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(255) NOT NULL,
+  `content_type_id` INT NOT NULL,
+  `codename` VARCHAR(100) NOT NULL,
+  UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `auth_group` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(150) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `auth_group_permissions` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `group_id` INT NOT NULL,
+  `permission_id` INT NOT NULL,
+  UNIQUE KEY `auth_group_permissions_group_id_permission_id_0cd325b0_uniq` (`group_id`,`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `django_admin_log` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `action_time` DATETIME(6) NOT NULL,
+  `object_id` LONGTEXT,
+  `object_repr` VARCHAR(200) NOT NULL,
+  `action_flag` SMALLINT UNSIGNED NOT NULL,
+  `change_message` LONGTEXT NOT NULL,
+  `content_type_id` INT,
+  `user_id` INT,
+  INDEX `django_admin_log_content_type_id_c4bce8eb` (`content_type_id`),
+  INDEX `django_admin_log_user_id_c564eba6` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Django migrations表
+CREATE TABLE `django_migrations` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `app` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `applied` DATETIME(6) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 学生表
 CREATE TABLE `students` (
