@@ -97,7 +97,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS配置（允许前端跨域访问）
-CORS_ALLOW_ALL_ORIGINS = True  # 允许所有来源（生产环境需要配置具体域名）
+# 当使用 withCredentials 时，不能用通配符 *
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+CORS_ALLOW_CREDENTIALS = True  # 允许携带Cookie
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
