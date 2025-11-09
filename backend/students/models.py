@@ -2,7 +2,7 @@
 学生数据模型
 """
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
+import bcrypt
 
 
 class Student(models.Model):
@@ -22,8 +22,9 @@ class Student(models.Model):
 
     def set_password(self, raw_password):
         """设置密码"""
-        self.password = make_password(raw_password)
+        hashed = bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt())
+        self.password = hashed.decode('utf-8')
 
     def check_password(self, raw_password):
         """验证密码"""
-        return check_password(raw_password, self.password)
+        return bcrypt.checkpw(raw_password.encode('utf-8'), self.password.encode('utf-8'))
