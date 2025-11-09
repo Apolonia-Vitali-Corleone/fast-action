@@ -431,9 +431,9 @@ onMounted(async () => {
 
     // 根据角色加载数据
     if (currentUser.value.role === 'student') {
-      fetchAvailableCourses()
+      await fetchAvailableCourses()
     } else {
-      fetchTeacherCourses()
+      await fetchTeacherCourses()
     }
   } catch (error) {
     // 未登录，显示登录页面
