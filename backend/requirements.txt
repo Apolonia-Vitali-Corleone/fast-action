@@ -6,3 +6,5 @@ django-cors-headers==4.0.0
 
 # MySQL客户端
 mysqlclient==2.2.0
+
+
